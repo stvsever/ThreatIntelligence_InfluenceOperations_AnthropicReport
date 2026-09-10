@@ -4,7 +4,7 @@ An interactive map of the influence operations section of Anthropic's threat int
 
 **Live site:** https://stvsever.github.io/ThreatIntelligence_InfluenceOperations_AnthropicReport/
 
-![Interactive map of the nine influence operations](src/dashboard/assets/og-image.png)
+![Interactive map of the nine influence operations](src/dashboard/assets/demo_screen.png)
 
 ## What it shows
 
