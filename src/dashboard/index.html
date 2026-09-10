@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Influence Operations on Claude | Threat Report Explorer</title>
+  <meta name="description" content="Interactive map of the nine influence operations disrupted in Anthropic's September 2026 threat intelligence report: who ran them, how they used Claude, and how far they spread.">
+  <meta name="author" content="Stijn Van Severen">
+  <meta name="theme-color" content="#F7F6F2">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Influence Operations on Claude">
+  <meta property="og:description" content="Nine influence operations that tried to use Claude, mapped from Anthropic's September 2026 threat report.">
+  <meta property="og:image" content="https://stvsever.github.io/ThreatIntelligence_InfluenceOperations_AnthropicReport/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    (function () {
+      var t = "system";
+      try { t = JSON.parse(localStorage.getItem("iov:theme") || '"system"'); } catch (e) {}
+      var q = /[?&]theme=(light|dark)/.exec(location.search);
+      if (q) t = q[1];
+      if (t !== "light" && t !== "dark") t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#/graph" data-view="graph" aria-label="Influence operations map">
+        <svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path d="M6.5 12c4.5 0 4-6.5 9-6.5M6.5 12h9.5M6.5 12c4.5 0 4 6.5 9 6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="4.5" cy="12" r="2.6" fill="currentColor"/>
+          <circle cx="18.5" cy="5.5" r="2.4" class="bm bm-1"/>
+          <circle cx="18.5" cy="12" r="2.4" class="bm bm-2"/>
+          <circle cx="18.5" cy="18.5" r="2.4" class="bm bm-3"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-title">Influence Operations on Claude</span>
+          <span class="brand-sub">Anthropic threat report, September 2026 · pp. 41 to 80</span>
+        </span>
+      </a>
+
+      <nav class="tabs" role="tablist" aria-label="Views">
+        <button role="tab" data-view="graph" aria-selected="true">Map</button>
+        <button role="tab" data-view="cases" aria-selected="false">Cases</button>
+        <button role="tab" data-view="figures" aria-selected="false">Figures</button>
+        <button role="tab" data-view="about" aria-selected="false">Method and sources</button>
+      </nav>
+
+      <div class="top-actions">
+        <div class="search" role="search">
+          <span data-icon="search" class="search-i"></span>
+          <input id="search" type="search" placeholder="Search actors, tactics, outlets" autocomplete="off" spellcheck="false" aria-label="Search the report">
+          <button class="search-clear" id="search-clear" data-act="clear-search" aria-label="Clear search" hidden><span data-icon="close" data-size="14"></span></button>
+          <kbd class="search-kbd">/</kbd>
+          <ul id="search-results" class="search-results" role="listbox" hidden></ul>
+        </div>
+        <button class="icon-btn" id="theme-toggle" data-cmd="theme-toggle" data-tip="Light or dark theme (T)" aria-label="Toggle theme"></button>
+        <div class="pop-wrap">
+          <button class="icon-btn" data-cmd="settings" data-tip="Display settings" aria-label="Display settings"><span data-icon="sliders"></span></button>
+          <div class="popover" id="settings" hidden>
+            <p class="pop-title">Display</p>
+            <div class="pop-row"><span>Theme</span>
+              <div class="seg" data-seg="theme">
+                <button data-cmd="theme" data-val="system">Auto</button>
+                <button data-cmd="theme" data-val="light">Light</button>
+                <button data-cmd="theme" data-val="dark">Dark</button>
+              </div>
+            </div>
+            <div class="pop-row"><span>Text size</span>
+              <div class="seg" data-seg="text">
+                <button data-cmd="text" data-val="0.9">S</button>
+                <button data-cmd="text" data-val="1">M</button>
+                <button data-cmd="text" data-val="1.15">L</button>
+              </div>
+            </div>
+            <div class="pop-row"><span>Animation</span>
+              <div class="seg" data-seg="motion">
+                <button data-cmd="motion" data-val="on">On</button>
+                <button data-cmd="motion" data-val="off">Off</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="icon-btn" data-cmd="help" data-tip="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts"><span data-icon="help"></span></button>
+        <a class="btn report-btn" href="https://www-cdn.anthropic.com/e50be2e51e7695dc4b1366a37a245a597377d3b5/Anthropic-Detecting-and-countering-091026.pdf" target="_blank" rel="noopener"><span data-icon="page"></span><span>Report</span></a>
+      </div>
+    </header>
+
+    <main>
+      <section class="view view-graph" id="view-graph">
+        <div class="toolbar" role="toolbar" aria-label="Map controls">
+          <div class="tb-group">
+            <span class="tb-label">Layout</span>
+            <div class="seg" data-seg="layout">
+              <button data-cmd="layout" data-val="lr" data-tip="Left to right (1)"><span data-icon="lr"></span><span class="seg-t">Horizontal</span></button>
+              <button data-cmd="layout" data-val="td" data-tip="Top down (2)"><span data-icon="td"></span><span class="seg-t">Vertical</span></button>
+              <button data-cmd="layout" data-val="radial" data-tip="Radial (3)"><span data-icon="radial"></span><span class="seg-t">Radial</span></button>
+            </div>
+          </div>
+          <div class="tb-group">
+            <span class="tb-label">Show</span>
+            <div class="seg" data-seg="depth">
+              <button data-cmd="depth" data-val="1" data-tip="Actor groups only">Groups</button>
+              <button data-cmd="depth" data-val="2" data-tip="Groups and cases">Cases</button>
+              <button data-cmd="depth" data-val="3" data-tip="Cases and their facets">Facets</button>
+              <button data-cmd="depth" data-val="4" data-tip="Every detail (E)">All</button>
+            </div>
+          </div>
+          <div class="tb-group">
+            <span class="tb-label">Color</span>
+            <div class="seg" data-seg="color">
+              <button data-cmd="color" data-val="group" data-tip="Color by actor type (B)">Actor type</button>
+              <button data-cmd="color" data-val="breakout" data-tip="Color by Breakout Scale reach (B)">Reach</button>
+            </div>
+          </div>
+          <div class="tb-group">
+            <button class="tgl" data-cmd="trends" aria-pressed="false" data-tip="Link trends to cases (L)"><span data-icon="links"></span><span class="seg-t">Trend links</span></button>
+            <button class="tgl" data-cmd="pulse" aria-pressed="true" data-tip="Pulse from root to selection (P)"><span data-icon="pulse"></span><span class="seg-t">Path pulse</span></button>
+            <button class="tgl" data-cmd="minimap" aria-pressed="true" data-tip="Minimap (M)"><span data-icon="minimap"></span><span class="seg-t">Minimap</span></button>
+          </div>
+          <div class="tb-spacer"></div>
+          <div class="tb-group tight">
+            <button class="icon-btn" data-cmd="expand-all" data-tip="Expand all (E)" aria-label="Expand all"><span data-icon="plus"></span></button>
+            <button class="icon-btn" data-cmd="collapse-all" data-tip="Collapse all (C)" aria-label="Collapse all"><span data-icon="minus"></span></button>
+            <span class="tb-div"></span>
+            <button class="icon-btn" data-cmd="zoom-out" data-tip="Zoom out (-)" aria-label="Zoom out"><span data-icon="zoomOut"></span></button>
+            <span class="zoom-level" id="zoom-level" aria-live="polite">100%</span>
+            <button class="icon-btn" data-cmd="zoom-in" data-tip="Zoom in (+)" aria-label="Zoom in"><span data-icon="zoomIn"></span></button>
+            <button class="icon-btn" data-cmd="fit" data-tip="Fit to screen (F)" aria-label="Fit to screen"><span data-icon="fit"></span></button>
+            <button class="icon-btn" data-cmd="reset" data-tip="Reset moved nodes (R)" aria-label="Reset moved nodes"><span data-icon="reset"></span></button>
+            <span class="tb-div"></span>
+            <div class="pop-wrap">
+              <button class="icon-btn" data-cmd="export-menu" data-tip="Export image" aria-label="Export image"><span data-icon="download"></span></button>
+              <div class="popover menu" id="export-menu" hidden>
+                <button data-cmd="export-svg">Download SVG</button>
+                <button data-cmd="export-png">Download PNG (2x)</button>
+              </div>
+            </div>
+            <button class="icon-btn" data-cmd="fullscreen" data-tip="Full screen" aria-label="Full screen"><span data-icon="fullscreen"></span></button>
+            <button class="icon-btn" data-cmd="panel" aria-pressed="true" data-tip="Details panel (D)" aria-label="Toggle details panel"><span data-icon="panel"></span></button>
+          </div>
+        </div>
+
+        <div class="stage" id="stage">
+          <div class="canvas-wrap">
+            <div class="canvas" id="canvas"></div>
+            <nav class="crumbs" id="crumbs" aria-label="Path to selection"></nav>
+            <div class="legend" id="legend"></div>
+            <div class="minimap" id="minimap" title="Minimap: click or drag to move the view"></div>
+            <div class="hint" id="hint" hidden>
+              <span><b>Click</b> a node to open it</span><span><b>Shift-click</b> for a whole branch</span><span><b>Drag</b> to pan or move nodes</span><span><b>Scroll</b> to zoom</span><span><kbd>?</kbd> shortcuts</span>
+              <button class="icon-btn sm" id="hint-close" aria-label="Dismiss"><span data-icon="close" data-size="14"></span></button>
+            </div>
+          </div>
+          <aside class="panel" id="panel" aria-label="Details">
+            <div class="panel-bar">
+              <span class="panel-kind" id="panel-kind"></span>
+              <button class="icon-btn sm" data-act="copy-link" data-tip="Copy a link to this view" aria-label="Copy link"><span data-icon="link" data-size="15"></span></button>
+              <button class="icon-btn sm" data-cmd="panel" data-tip="Hide panel (D)" aria-label="Hide panel"><span data-icon="close" data-size="15"></span></button>
+            </div>
+            <div class="panel-content" id="panel-content"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-cases" hidden></section>
+      <section class="view" id="view-figures" hidden></section>
+      <section class="view" id="view-about" hidden></section>
+    </main>
+  </div>
+
+  <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Figure viewer" tabindex="-1">
+    <div class="lb-stage" id="lb-stage"><img id="lb-img" alt=""></div>
+    <button class="lb-nav prev" data-lb="prev" aria-label="Previous figure"><span data-icon="left" data-size="22"></span></button>
+    <button class="lb-nav next" data-lb="next" aria-label="Next figure"><span data-icon="right" data-size="22"></span></button>
+    <div class="lb-bar">
+      <div class="lb-cap" id="lb-cap"></div>
+      <div class="lb-actions">
+        <a class="btn on-dark" id="lb-page" target="_blank" rel="noopener"></a>
+        <button class="btn on-dark" id="lb-go"><span data-icon="target" data-size="15"></span>Show in map</button>
+        <button class="icon-btn on-dark" data-lb="close" aria-label="Close viewer"><span data-icon="close"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-scrim" id="help" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <div class="modal-head"><h2 id="help-title">Keyboard shortcuts</h2><button class="icon-btn" data-cmd="help" aria-label="Close"><span data-icon="close"></span></button></div>
+      <div class="modal-body">
+        <dl class="keys">
+          <div><dt><kbd>/</kbd></dt><dd>Search</dd></div>
+          <div><dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></dt><dd>Horizontal, vertical, radial layout</dd></div>
+          <div><dt><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd></dt><dd>Walk the tree (click the canvas first)</dd></div>
+          <div><dt><kbd>Enter</kbd></dt><dd>Open or close the selected node</dd></div>
+          <div><dt><kbd>E</kbd> <kbd>C</kbd></dt><dd>Expand all, collapse all</dd></div>
+          <div><dt><kbd>F</kbd></dt><dd>Fit map to screen</dd></div>
+          <div><dt><kbd>+</kbd> <kbd>-</kbd></dt><dd>Zoom in, zoom out</dd></div>
+          <div><dt><kbd>R</kbd></dt><dd>Reset nodes you moved</dd></div>
+          <div><dt><kbd>B</kbd></dt><dd>Color by actor type or reach</dd></div>
+          <div><dt><kbd>L</kbd> <kbd>P</kbd> <kbd>M</kbd></dt><dd>Trend links, path pulse, minimap</dd></div>
+          <div><dt><kbd>D</kbd></dt><dd>Show or hide the details panel</dd></div>
+          <div><dt><kbd>T</kbd></dt><dd>Light or dark theme</dd></div>
+          <div><dt><kbd>Shift</kbd> + click</dt><dd>Expand or collapse a whole branch</dd></div>
+          <div><dt><kbd>Esc</kbd></dt><dd>Close menus, viewer or search</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="tooltip" id="tooltip" hidden></div>
+  <div class="btn-tip" id="btn-tip" hidden></div>
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/tree.js"></script>
+  <script src="js/graph.js"></script>
+  <script src="js/panel.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
